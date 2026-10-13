@@ -38,6 +38,7 @@ nxt = next((p for p in posts if not p["posted"]), None)
 if not nxt:
     print("Queue empty, nothing to post."); sys.exit(0)
 
+nxt["text"] = nxt["text"].replace("**", "").replace("__", "")
 ok_personal = publish(person_urn(), nxt["text"])
 
 org = org_urn()
