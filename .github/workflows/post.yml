@@ -1,0 +1,32 @@
+name: Post to LinkedIn
+on:
+  schedule:
+    # 15 منشوراً: كل ساعة من 12:00 إلى 02:00 UTC
+    # = من 8:00 صباحاً إلى 10:00 مساءً بتوقيت نيويورك (الصيفي EDT)
+    - cron: "0 12-23 * * *"
+    - cron: "0 0-2 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: queue
+  cancel-in-progress: false
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - run: python post.py
+        env:
+          LI_TOKEN: ${{ secrets.LI_TOKEN }}
+          LI_PERSON_ID: ${{ secrets.LI_PERSON_ID }}
+          LI_ORG_ID: ${{ secrets.LI_ORG_ID }}
+      - run: |
+          git config user.name "bot" && git config user.email "bot@users.noreply.github.com"
+          git add posts.json
+          git commit -m "posted" || echo "nothing to commit"
+          git pull --rebase && git push
