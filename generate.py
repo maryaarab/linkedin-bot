@@ -1,4 +1,4 @@
-import requests, json, re, time, os, random
+import requests, json, re, time, os, random, datetime
 from bs4 import BeautifulSoup
 from collections import Counter, defaultdict
 
@@ -28,6 +28,22 @@ STYLES = [
  "Start with 'Looking for your next step in {state}?'",
  "Start with a bold one-line promise, then details",
 ]
+
+STOP = {"remote", "intern", "internship", "the", "and", "for", "with", "our", "new"}
+BAD_WORDS = ["panelist", "focus group", "survey", "paid study", "mystery shopper"]
+
+def words(title):
+    return {w for w in re.findall(r"[a-z]+", title.lower()) if w not in STOP and len(w) > 2}
+
+def too_similar(title, seen_sets):
+    w = words(title)
+    return any(w and o and len(w & o) / len(w | o) >= 0.5 for o in seen_sets)
+
+def clean(text):
+    """LinkedIn لا يدعم markdown: نزيل النجوم والعناوين"""
+    text = text.replace("**", "").replace("__", "")
+    text = re.sub(r"^#{1,6}\s+", "", text, flags=re.M)
+    return text.strip()
 
 def get(url):
     r = requests.get(url, headers=HEADERS, timeout=60)
@@ -68,7 +84,7 @@ def diversify(cards, n, done_urls):
     random.shuffle(cards)
     by_cat = defaultdict(list)
     for c in cards: by_cat[c["category"]].append(c)
-    used_titles, used_states, out = set(), Counter(), []
+    seen_sets, used_states, out = [], Counter(), []
     cats = list(by_cat)
     max_per_state = max(3, n // 8)
     while len(out) < n and any(by_cat.values()):
@@ -76,11 +92,10 @@ def diversify(cards, n, done_urls):
         for cat in cats:
             while by_cat[cat]:
                 c = by_cat[cat].pop(0)
-                key = re.sub(r"\W+", " ", c["title"].lower()).strip()
                 state = c["location"].split(",")[-1].strip()
-                if key in used_titles or used_states[state] >= max_per_state:
+                if too_similar(c["title"], seen_sets) or used_states[state] >= max_per_state:
                     continue
-                used_titles.add(key); used_states[state] += 1
+                seen_sets.append(words(c["title"])); used_states[state] += 1
                 out.append(c); progressed = True
                 break
             if len(out) >= n: break
@@ -102,16 +117,27 @@ def parse_job(url):
 
 def is_real(job):
     d = job["desc"].lower()
+    t = job["title"].lower()
     bad = ["not an active job", "not an active listing", "specific openings have not"]
-    return not any(b in d for b in bad) and len(job["desc"]) > 200
+    if any(b in d for b in bad) or len(d) < 200:
+        return False
+    if any(w in t or w in d[:800] for w in BAD_WORDS):      # عروض مشبوهة
+        return False
+    years = [int(y) for y in re.findall(r"\b(20\d\d)\b", job["title"])]
+    if years and max(years) < datetime.date.today().year:    # وظائف سنوات ماضية
+        return False
+    return True
 
 def pick_diverse(n, done_urls):
     cards = scan_listings()
-    chosen = []
-    for c in diversify(cards, n + 30, done_urls):
+    chosen, fps = [], set()
+    for c in diversify(cards, n + 60, done_urls):
         try: j = parse_job(c["url"])
         except Exception as e: print("skip", c["url"], e); continue
         if not is_real(j): continue
+        fp = re.sub(r"\W+", " ", j["desc"].lower())[:150]
+        if fp in fps: continue           # نفس الوصف في مدن مختلفة
+        fps.add(fp)
         chosen.append(j)
         print(len(chosen), j["title"], "-", j["location"], "|", j["category"])
         if len(chosen) == n: break
@@ -131,12 +157,14 @@ Original description (rewrite, never copy):
 Rules:
 - Style: {style}
 - Line 1 = hook under 12 words
-- 110-170 words, short lines, blank lines between them, max 4 emojis
+- 110-170 words, short lines, blank lines between them, max 3 emojis
 - Extract the real company name from the description and mention it; if none, don't invent one
 - Mention: role, city/state, 3 key points (duties, requirements or benefits)
 - Mention salary ONLY if it appears in the description
 - Naturally include SEO phrases: "{title}", "{location}", "hiring", "apply now", "US jobs"
 - If internship or entry-level, say so clearly
+- PLAIN TEXT ONLY: no markdown, no asterisks, no bold, no headings
+- Hashtags: short CamelCase, each under 20 characters (e.g. #SoftwareIntern, not a full job title)
 - Never invent facts. Do not copy sentences.
 - Last lines: "Apply here 👉 {link}" then 5 hashtags (#Hiring #USJobs + role, industry, state)
 Return only the post text."""
@@ -153,7 +181,7 @@ def gen(job, i):
                   "messages": [{"role": "user", "content": prompt}]},
             timeout=120)
         if r.ok:
-            return r.json()["choices"][0]["message"]["content"].strip()
+            return clean(r.json()["choices"][0]["message"]["content"])
         print("API error", r.status_code, r.text[:200]); time.sleep(10)
     return None
 
