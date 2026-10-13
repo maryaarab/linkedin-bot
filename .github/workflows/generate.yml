@@ -1,0 +1,28 @@
+name: Generate posts
+on:
+  schedule:
+    - cron: "0 9 * * *"        # كل يوم 09:00 UTC (قبل بداية النشر)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: queue
+  cancel-in-progress: false
+jobs:
+  gen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests beautifulsoup4
+      - run: python generate.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          POSTS_PER_DAY: "15"
+      - run: |
+          git config user.name "bot" && git config user.email "bot@users.noreply.github.com"
+          git add posts.json
+          git commit -m "new posts" || echo "nothing to commit"
+          git pull --rebase && git push
