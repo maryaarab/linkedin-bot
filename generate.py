@@ -144,6 +144,8 @@ def pick_diverse(n, done_urls):
         time.sleep(1)
     return chosen
 
+FIRST_PERSON = re.compile(r"\b(our client|our team|join our|we are|we're|we want|we offer|we need|we'd|our company|with us|join us)\b", re.I)
+
 BULLETS = ["🔹", "▪️", "➡️", "✔️", "🔸"]
 
 PROMPT = """You are a LinkedIn growth writer for a US job board. Write ONE original,
@@ -188,6 +190,7 @@ clearance, travel, shifts, physical requirements. Skip this line otherwise.]
 [8 hashtags on ONE line]
 
 RULES:
+- VOICE: write in the THIRD PERSON, as a job board sharing someone else's opening. NEVER say "we", "our", "us", "our client", "our team", "join our team" or "we want to hear from you". Say "[Company] is hiring", "this team is looking for", "the role involves". If the company is unknown, say e.g. "A San Diego IT team is hiring" (never "our client").
 - Plain text only. No markdown, no asterisks, no bold, no headings.
 - Extract the real company name from the description. If it is not stated, write the title and city only; never invent a company.
 - Skip any info line (🎓 💰 ⏰ ⚠️) if that information is not in the description. NEVER invent facts, numbers or requirements.
@@ -202,7 +205,7 @@ def gen(job, i):
     bullet = BULLETS[i % len(BULLETS)]
     prompt = PROMPT.format(style=style, link=link, b=bullet,
                            **{k: job[k] for k in ("title", "location", "category", "desc")})
-    for _ in range(3):
+    for attempt in range(3):
         r = requests.post("https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {OPENAI_KEY}"},
             json={"model": MODEL, "temperature": 0.8,
@@ -213,6 +216,8 @@ def gen(job, i):
         text = clean(r.json()["choices"][0]["message"]["content"])
         if len(text) > 2990:                     # حد LinkedIn 3000 حرف
             print("too long, retrying"); continue
+        if FIRST_PERSON.search(text) and attempt < 2:   # صيغة المتكلم ممنوعة
+            print("first-person voice, retrying"); continue
         if job["url"] not in text:               # نضمن وجود رابط التقديم
             text += f"\n\n👉 Apply: {link}"
         return text
