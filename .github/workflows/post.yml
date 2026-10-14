@@ -5,6 +5,8 @@ on:
     # النافذة: 12:00-04:00 UTC = 8:00 صباحاً - 12:00 ليلاً بتوقيت نيويورك (EDT)
     - cron: "7,27,47 12-23 * * *"
     - cron: "7,27,47 0-3 * * *"
+  repository_dispatch:
+    types: [post]      # استدعاء خارجي من cron-job.org
   workflow_dispatch:
 permissions:
   contents: write
