@@ -7,7 +7,7 @@ LIST_QUERY = "jobs_ppp=384"
 OPENAI_KEY = os.environ["OPENAI_API_KEY"]
 MODEL = "gpt-4o-mini"
 HEADERS = {"User-Agent": "Mozilla/5.0 (NextJobyPostBot)"}
-MAX_SCAN = int(os.environ.get("MAX_SCAN", 2000))
+MAX_SCAN = int(os.environ.get("MAX_SCAN", 600))   # أحدث 600 وظيفة
 POSTS_PER_DAY = int(os.environ.get("POSTS_PER_DAY", 15))
 QUEUE_FILE = "posts.json"
 
@@ -81,7 +81,7 @@ def diversify(cards, n, done_urls):
     cards = [c for c in cards
              if c["url"] not in done_urls
              and not any(x in c["category"] for x in EXCLUDE)]
-    random.shuffle(cards)
+    # بدون خلط: نحافظ على ترتيب الموقع (الأحدث أولاً)
     by_cat = defaultdict(list)
     for c in cards: by_cat[c["category"]].append(c)
     seen_sets, used_states, out = [], Counter(), []
@@ -185,19 +185,27 @@ def gen(job, i):
         print("API error", r.status_code, r.text[:200]); time.sleep(10)
     return None
 
+def build_queue(queue, today, pick_fn, gen_fn, n):
+    """دفعة جديدة كل يوم: تُحذف المنشورات القديمة غير المنشورة، وتُولَّد n جديدة."""
+    if any(p.get("batch") == today for p in queue):
+        print("Today's batch already generated, skipping.")
+        return queue
+    stale = sum(1 for p in queue if not p["posted"])
+    queue = [p for p in queue if p["posted"]]          # نحتفظ بالمنشور فقط (للسجل ومنع التكرار)
+    done_urls = {p["url"] for p in queue}
+    print(f"dropped {stale} stale unposted posts; generating {n} fresh ones")
+    for i, j in enumerate(pick_fn(n, done_urls)):
+        t = gen_fn(j, i + len(queue))
+        if t:
+            queue.append({"url": j["url"], "title": j["title"], "text": t,
+                          "posted": False, "batch": today})
+        time.sleep(1)
+    return queue
+
 if __name__ == "__main__":
     queue = json.load(open(QUEUE_FILE, encoding="utf-8")) if os.path.exists(QUEUE_FILE) else []
-    done_urls = {p["url"] for p in queue}
-    pending = sum(1 for p in queue if not p["posted"])
-    need = max(0, POSTS_PER_DAY - pending)      # لا نكدّس طابوراً زائداً
-    print(f"pending={pending}, need={need}")
-    if need:
-        jobs = pick_diverse(need, done_urls)
-        for i, j in enumerate(jobs):
-            t = gen(j, i + len(queue))
-            if t:
-                queue.append({"url": j["url"], "title": j["title"], "text": t, "posted": False})
-            time.sleep(1)
+    today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    queue = build_queue(queue, today, pick_diverse, gen, POSTS_PER_DAY)
     queue = queue[-600:]
     json.dump(queue, open(QUEUE_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     print("Queue size:", len(queue), "| unposted:", sum(1 for p in queue if not p["posted"]))
