@@ -113,7 +113,7 @@ def parse_job(url):
     return {"url": url, "title": title,
             "location": loc.get_text(strip=True) if loc else "USA",
             "category": cat.get_text(strip=True) if cat else "General",
-            "desc": desc[:2500]}
+            "desc": desc[:4500]}
 
 def is_real(job):
     d = job["desc"].lower()
@@ -144,45 +144,78 @@ def pick_diverse(n, done_urls):
         time.sleep(1)
     return chosen
 
-PROMPT = """You are a LinkedIn growth writer for a US job board. Write ONE original
-LinkedIn post for US job seekers from this job.
+BULLETS = ["🔹", "▪️", "➡️", "✔️", "🔸"]
+
+PROMPT = """You are a LinkedIn growth writer for a US job board. Write ONE original,
+detailed LinkedIn job post for US job seekers, based ONLY on the job below.
 
 Title: {title}
 Location: {location}
 Category: {category}
-Job page link: {link}
-Original description (rewrite, never copy):
+Original description (rewrite everything, never copy sentences):
 {desc}
 
-Rules:
-- Style: {style}
-- Line 1 = hook under 12 words
-- 110-170 words, short lines, blank lines between them, max 3 emojis
-- Extract the real company name from the description and mention it; if none, don't invent one
-- Mention: role, city/state, 3 key points (duties, requirements or benefits)
-- Mention salary ONLY if it appears in the description
-- Naturally include SEO phrases: "{title}", "{location}", "hiring", "apply now", "US jobs"
-- If internship or entry-level, say so clearly
-- PLAIN TEXT ONLY: no markdown, no asterisks, no bold, no headings
-- Hashtags: short CamelCase, each under 20 characters (e.g. #SoftwareIntern, not a full job title)
-- Never invent facts. Do not copy sentences.
-- Last lines: "Apply here 👉 {link}" then 5 hashtags (#Hiring #USJobs + role, industry, state)
-Return only the post text."""
+FOLLOW THIS STRUCTURE EXACTLY (it is a skeleton, not content to copy):
+
+🚀 [Job Title] | [Company] | [City, ST] 🇺🇸
+
+[Opening: 1-2 sentences. Style for this post: {style}]
+
+[1 sentence about the company/team and what the role is]
+
+📍 [City, State]
+💼 [Type: internship / full-time / part-time / remote + season/year if stated]
+🎓 [Who it is for / education level]      <- only if stated
+💰 [Pay or salary range]                  <- only if stated
+⏰ [Hours / schedule]                     <- only if stated
+
+What you'll work on:
+{b} [duty 1]
+{b} [duty 2]
+(5 to 7 bullets, short, rewritten in your own words)
+
+Skills that can help you stand out:
+✅ [skill or requirement 1]
+✅ [skill or requirement 2]
+(4 to 7 bullets)
+
+⚠️ [One short note ONLY if the description contains a real caveat: work authorization,
+clearance, travel, shifts, physical requirements. Skip this line otherwise.]
+
+👉 View the full details & apply:
+{link}
+
+[8 hashtags on ONE line]
+
+RULES:
+- Plain text only. No markdown, no asterisks, no bold, no headings.
+- Extract the real company name from the description. If it is not stated, write the title and city only; never invent a company.
+- Skip any info line (🎓 💰 ⏰ ⚠️) if that information is not in the description. NEVER invent facts, numbers or requirements.
+- Use natural SEO wording: job title, city, state, "hiring", "internship" or "entry-level" when true, "apply".
+- Hashtags: exactly 8, short CamelCase, each under 22 characters: role-specific, industry, #USJobs, state (e.g. #MinnesotaJobs), company if short.
+- Total length under 2500 characters. Return only the post text."""
 
 def gen(job, i):
-    link = job["url"] + "?utm_source=linkedin&utm_medium=social&utm_campaign=jobs"
+    link = job["url"] + "?utm_source=linkedin"
     state = job["location"].split(",")[-1].strip()
     style = STYLES[i % len(STYLES)].replace("{state}", state)
-    prompt = PROMPT.format(style=style, link=link, **{k: job[k] for k in ("title", "location", "category", "desc")})
+    bullet = BULLETS[i % len(BULLETS)]
+    prompt = PROMPT.format(style=style, link=link, b=bullet,
+                           **{k: job[k] for k in ("title", "location", "category", "desc")})
     for _ in range(3):
         r = requests.post("https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {OPENAI_KEY}"},
-            json={"model": MODEL, "temperature": 0.9,
+            json={"model": MODEL, "temperature": 0.8,
                   "messages": [{"role": "user", "content": prompt}]},
             timeout=120)
-        if r.ok:
-            return clean(r.json()["choices"][0]["message"]["content"])
-        print("API error", r.status_code, r.text[:200]); time.sleep(10)
+        if not r.ok:
+            print("API error", r.status_code, r.text[:200]); time.sleep(10); continue
+        text = clean(r.json()["choices"][0]["message"]["content"])
+        if len(text) > 2990:                     # حد LinkedIn 3000 حرف
+            print("too long, retrying"); continue
+        if job["url"] not in text:               # نضمن وجود رابط التقديم
+            text += f"\n\n👉 Apply: {link}"
+        return text
     return None
 
 def build_queue(queue, today, pick_fn, gen_fn, n):
