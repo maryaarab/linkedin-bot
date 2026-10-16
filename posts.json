@@ -327,8 +327,9 @@
     "text": "🚀 Senior Embedded Software Engineer, Platform Software | Schaumburg, IL 🇺🇸\n\nThis position offers the opportunity to work on cutting-edge secure NFC/RFID credential reader products. The role requires a highly skilled individual with a strong background in embedded systems and firmware development.\n\n📍 Schaumburg, IL\n💼 Full-time\n\nWhat you'll work on:\n▪️ Design and develop production-quality embedded firmware using modern C++ (C++17 or newer)\n▪️ Create low-level drivers and hardware interfaces including USB, UART, SPI, I2C, GPIO, DMA, and timers\n▪️ Enhance and implement embedded software components, modules, threads, and state machines\n▪️ Work within an RTOS environment, preferably Zephyr, to integrate various software functionalities\n▪️ Extend USB functionality, focusing on CCID-related protocols\n▪️ Optimize firmware for performance, memory usage, timing, and power consumption\n▪️ Implement robust fault handling and secure coding practices\n\nSkills that can help you stand out:\n✅ Expertise in C++ (C++17+)\n✅ Experience with ARM Cortex-M microcontrollers, particularly Cortex-M4F\n✅ Hands-on familiarity with STM32 microcontrollers, ideally the STM32G4 family\n✅ Strong background in real-time operating systems, with Zephyr being highly preferred\n✅ Knowledge of USB stacks and communication protocols\n✅ Experience in debugging and optimizing embedded systems\n✅ Understanding of secure firmware development practices\n\n👉 View the full details & apply: https://nextjoby.com/job/senior-embedded-software-engineer-platform-software-13/?utm_source=linkedin\n\n#EmbeddedEngineer #FirmwareDevelopment #Cplusplus #RTOS #IllinoisJobs #USJobs #EmbeddedSystems #NFC",
     "location": "Schaumburg, IL",
     "category": "General Careers",
-    "posted": false,
-    "batch": "2026-10-16"
+    "posted": true,
+    "batch": "2026-10-16",
+    "posted_at": "2026-10-16T21:30:09.929435+00:00"
   },
   {
     "url": "https://nextjoby.com/job/data-scientist-fulltime-9/",
