@@ -7,8 +7,9 @@ LIST_QUERY = "jobs_ppp=384"
 OPENAI_KEY = os.environ["OPENAI_API_KEY"]
 MODEL = "gpt-4o-mini"
 HEADERS = {"User-Agent": "Mozilla/5.0 (NextJobyPostBot)"}
-MAX_SCAN = int(os.environ.get("MAX_SCAN", 600))   # أحدث 600 وظيفة
-POSTS_PER_DAY = int(os.environ.get("POSTS_PER_DAY", 15))
+MAX_SCAN = int(os.environ.get("MAX_SCAN", 1500))  # أحدث 1500 وظيفة (نفلتر منها IT/هندسة)
+POSTS_PER_DAY = int(os.environ.get("POSTS_PER_DAY", 24))
+FORCE = os.environ.get("FORCE", "").lower() == "true"   # إعادة التوليد الآن
 QUEUE_FILE = "posts.json"
 
 # تصنيفات لا تناسب جمهور LinkedIn الأمريكي
@@ -45,6 +46,49 @@ def clean(text):
     text = re.sub(r"^#{1,6}\s+", "", text, flags=re.M)
     return text.strip()
 
+# ===== نركّز على IT والهندسة فقط =====
+INCLUDE_CI = re.compile(
+    r"\b(engineer\w*|software|developer|programmer|devops|cloud|cyber\w*|"
+    r"data (?:scientist|analyst|engineer)|machine learning|artificial intelligence|"
+    r"network (?:admin\w*|engineer\w*|security)|sysadmin|systems? (?:admin\w*|analyst|engineer\w*)|"
+    r"full[- ]?stack|front[- ]?end|back[- ]?end|database|help ?desk|technical support|"
+    r"architect|robotics|firmware|embedded|iot|servicenow|salesforce|java|python|kubernetes)\b", re.I)
+INCLUDE_CS = re.compile(r"\b(IT|AI|ML|QA|SRE|DBA|SAP)\b")   # حساسة لحالة الأحرف
+
+def is_tech(title):
+    return bool(INCLUDE_CI.search(title) or INCLUDE_CS.search(title))
+
+# ===== ممنوعات: عدّل القوائم كما تشاء =====
+# (أ) قوية: ترفض الوظيفة إن ظهرت في أي مكان من الوصف
+STRONG_BLOCK = [
+    "casino", "gambling", "sportsbook", "betting", "lottery", "poker", "slot machines",
+    "draftkings", "fanduel", "caesars", "mgm resorts",
+    "brewery", "brewing company", "distillery", "winery", "liquor", "alcoholic beverage",
+    "tobacco", "cigarette", "cigar", "vaping", "philip morris", "altria",
+    "adult entertainment", "strip club", "nightclub", "escort",
+    "payday loan", "mortgage lender", "mortgage loans", "consumer lending", "credit union",
+]
+# (ب) عادية: تُفحص في العنوان وأول 1000 حرف من الوصف (مقدمة الشركة) فقط،
+#     حتى لا نرفض وظيفة بسبب "health insurance" أو "student loan" في المزايا
+WEAK_BLOCK = [
+    "bank", "banks", "banking", "banker", "bankers", "lender", "lending",
+    "loan officer", "loan servicing", "personal loans", "auto loans", "business loans", "home loans",
+    "mortgage", "credit card", "credit cards", "investment bank", "wealth management",
+    "insurance company", "insurance carrier", "insurance agency", "insurance broker", "insurtech",
+    "alcohol", "beer", "wine", "spirits", "bartender", "gaming and wagering", "wagering",
+    "jpmorgan", "jp morgan", "wells fargo", "bank of america", "citigroup", "citibank",
+    "goldman sachs", "morgan stanley", "capital one", "american express", "discover financial",
+    "synchrony", "truist", "pnc", "us bancorp", "fifth third", "navy federal",
+    "state farm", "geico", "allstate", "metlife", "prudential", "liberty mutual",
+]
+def _rx(words):
+    return re.compile(r"\b(?:" + "|".join(re.escape(w) for w in words) + r")\b", re.I)
+STRONG_RX, WEAK_RX = _rx(STRONG_BLOCK), _rx(WEAK_BLOCK)
+
+def blocked(job):
+    head = job["title"] + " " + job["desc"][:1000]
+    return bool(WEAK_RX.search(head) or STRONG_RX.search(job["title"] + " " + job["desc"]))
+
 def get(url):
     r = requests.get(url, headers=HEADERS, timeout=60)
     r.raise_for_status()
@@ -80,7 +124,9 @@ def scan_listings():
 def diversify(cards, n, done_urls):
     cards = [c for c in cards
              if c["url"] not in done_urls
+             and is_tech(c["title"])
              and not any(x in c["category"] for x in EXCLUDE)]
+    print("tech candidates:", len(cards))
     # بدون خلط: نحافظ على ترتيب الموقع (الأحدث أولاً)
     by_cat = defaultdict(list)
     for c in cards: by_cat[c["category"]].append(c)
@@ -122,6 +168,8 @@ def is_real(job):
     if any(b in d for b in bad) or len(d) < 200:
         return False
     if any(w in t or w in d[:800] for w in BAD_WORDS):      # عروض مشبوهة
+        return False
+    if blocked(job):                                         # بنوك / خمر / قمار ...
         return False
     years = [int(y) for y in re.findall(r"\b(20\d\d)\b", job["title"])]
     if years and max(years) < datetime.date.today().year:    # وظائف سنوات ماضية
@@ -225,7 +273,7 @@ def gen(job, i):
 
 def build_queue(queue, today, pick_fn, gen_fn, n):
     """دفعة جديدة كل يوم: تُحذف المنشورات القديمة غير المنشورة، وتُولَّد n جديدة."""
-    if any(p.get("batch") == today for p in queue):
+    if not FORCE and any(p.get("batch") == today for p in queue):
         print("Today's batch already generated, skipping.")
         return queue
     stale = sum(1 for p in queue if not p["posted"])
@@ -236,6 +284,8 @@ def build_queue(queue, today, pick_fn, gen_fn, n):
         t = gen_fn(j, i + len(queue))
         if t:
             queue.append({"url": j["url"], "title": j["title"], "text": t,
+                          "location": j.get("location", "USA"),
+                          "category": j.get("category", "General"),
                           "posted": False, "batch": today})
         time.sleep(1)
     return queue
