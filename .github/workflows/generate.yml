@@ -2,8 +2,15 @@ name: Generate posts
 on:
   schedule:
     - cron: "17 10 * * *"      # الأساسية 10:17 UTC = 11:17 بالمغرب (بعد انتهاء الاستيراد)
-    - cron: "7 11 * * *"       # احتياطية 11:07 UTC (تتجاوز التوليد إن تم)
+    - cron: "17 11 * * *"      # احتياطية 11:17 UTC (تتجاوز التوليد إن تم)
+  repository_dispatch:
+    types: [generate]   # استدعاء خارجي من cron-job.org
   workflow_dispatch:
+    inputs:
+      force:
+        description: "true = أعد التوليد الآن حتى لو وُجدت دفعة اليوم"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -17,13 +24,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install requests beautifulsoup4
+      - run: sudo apt-get install -y fonts-dejavu-core
+      - run: pip install requests beautifulsoup4 pillow
       - run: python generate.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          POSTS_PER_DAY: "15"
+          POSTS_PER_DAY: "24"
+          FORCE: ${{ inputs.force }}
+      - run: python pins.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PIN_BOARD: "US Jobs"
+          PIN_SLOTS: "10"
+          PIN_USE_GPT: "true"    # true = وصف أدق عبر GPT (10 طلبات يومياً فقط)؛ false = بدون API
+          FORCE: ${{ inputs.force }}
       - run: |
           git config user.name "bot" && git config user.email "bot@users.noreply.github.com"
-          git add posts.json
+          git add -A posts.json pins
           git commit -m "new posts" || echo "nothing to commit"
           git pull --rebase && git push
