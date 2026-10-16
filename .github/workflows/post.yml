@@ -1,10 +1,7 @@
 name: Post to LinkedIn
 on:
   schedule:
-    # محاولات متكررة في دقائق أقل ازدحاماً؛ post.py يقرر هل ينشر أم لا
-    # النافذة: 12:00-04:00 UTC = 8:00 صباحاً - 12:00 ليلاً بتوقيت نيويورك (EDT)
-    - cron: "7,27,47 12-23 * * *"
-    - cron: "7,27,47 0-3 * * *"
+    - cron: "17 * * * *"      # احتياطي فقط؛ المشغّل الأساسي cron-job.org كل 30 دقيقة
   repository_dispatch:
     types: [post]      # استدعاء خارجي من cron-job.org
   workflow_dispatch:
@@ -27,8 +24,20 @@ jobs:
           LI_TOKEN: ${{ secrets.LI_TOKEN }}
           LI_PERSON_ID: ${{ secrets.LI_PERSON_ID }}
           LI_ORG_ID: ${{ secrets.LI_ORG_ID }}
-      - run: |
+      - run: python pin_post.py
+        if: always()
+        env:
+          MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+          # الإعداد المجاني (حوالي 600 رصيد Make شهرياً): 10 بيبنات في النهار الأمريكي
+          PIN_SLOTS: "10"
+          PIN_START_H: "12"
+          PIN_SPAN_H: "14"
+          PIN_WINDOW_H: "16"
+          # للنشر كل ساعة (24 بيناً؛ يحتاج خطة Make مدفوعة) استبدل القيم الأربع بهذه:
+          # PIN_SLOTS: "24"  PIN_START_H: "11"  PIN_SPAN_H: "23"  PIN_WINDOW_H: "24"
+      - if: always()
+        run: |
           git config user.name "bot" && git config user.email "bot@users.noreply.github.com"
-          git add posts.json
+          git add -A
           git commit -m "posted" || echo "nothing to commit"
           git pull --rebase && git push
