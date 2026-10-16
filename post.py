@@ -4,9 +4,9 @@ import datetime as dt
 TOKEN = os.environ["LI_TOKEN"].strip()
 H = {"Authorization": f"Bearer {TOKEN}", "X-Restli-Protocol-Version": "2.0.0"}
 
-SLOTS = 15            # عدد المنشورات يومياً
-START_H = 12          # بداية النافذة: 12:00 UTC = 8:00 صباحاً نيويورك (EDT)
-WINDOW_H = 16         # النافذة تنتهي 04:00 UTC
+SLOTS = 24            # عدد المنشورات يومياً (منشور كل ساعة)
+START_H = 11          # بداية اليوم 11:00 UTC (بعد التوليد 10:17)
+WINDOW_H = 24         # 24 ساعة كاملة
 MIN_GAP_MIN = 20      # أقل فاصل بين منشورين
 
 def parse(s):
