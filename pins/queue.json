@@ -785,8 +785,9 @@
     "link": "https://nextjoby.com/job/sap-senior-consultants-2/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/e90128b053a2.png",
     "keywords": "SAP Senior Consultants,Chicago jobs,Production Planning,Plant Maintenance,SAP S/4HANA,IT jobs",
-    "posted": false,
-    "batch": "2026-10-23"
+    "posted": true,
+    "batch": "2026-10-23",
+    "posted_at": "2026-10-24T00:30:10.462786+00:00"
   },
   {
     "title": "Power Portfolio Manager-AI Data Centers in Atlanta, GA",
