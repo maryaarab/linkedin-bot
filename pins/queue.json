@@ -805,8 +805,9 @@
     "link": "https://nextjoby.com/job/software-engineer-java-python/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/43525701893e.png",
     "keywords": "Software Engineer,Java,Python,Tech Jobs,New York,Genpact",
-    "posted": false,
-    "batch": "2026-10-24"
+    "posted": true,
+    "batch": "2026-10-24",
+    "posted_at": "2026-10-24T12:00:14.608511+00:00"
   },
   {
     "title": "Project Engineer Position Available in Clifton, NJ",
