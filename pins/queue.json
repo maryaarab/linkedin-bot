@@ -1275,8 +1275,9 @@
     "link": "https://nextjoby.com/job/sr-sql-developer/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/c5af3d7ac63e.png",
     "keywords": "Sr. SQL Developer,Chapel Hill NC,data warehouse,ETL,SQL jobs,tech jobs",
-    "posted": false,
-    "batch": "2026-10-28"
+    "posted": true,
+    "batch": "2026-10-28",
+    "posted_at": "2026-10-28T23:00:14.854640+00:00"
   },
   {
     "title": "Engineering Manager – Mechanical Design in Chicago, IL",
