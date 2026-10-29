@@ -4,27 +4,33 @@ import datetime as dt
 TOKEN = os.environ["LI_TOKEN"].strip()
 H = {"Authorization": f"Bearer {TOKEN}", "X-Restli-Protocol-Version": "2.0.0"}
 
-SLOTS = 24            # عدد المنشورات يومياً (منشور كل ساعة)
-START_H = 11          # بداية اليوم 11:00 UTC (بعد التوليد 10:17)
-WINDOW_H = 24         # 24 ساعة كاملة
-MIN_GAP_MIN = 20      # أقل فاصل بين منشورين
+from zoneinfo import ZoneInfo
+
+TZ = ZoneInfo("America/New_York")                    # يتكيف تلقائياً مع التوقيت الصيفي والشتوي
+SLOTS = int(os.environ.get("LI_POSTS_PER_DAY", 24))  # عدد المنشورات يومياً
+START_HOUR = 7                                       # 7:00 صباحاً بتوقيت نيويورك
+END_HOUR = 22                                        # 10:00 مساءً بتوقيت نيويورك
+GRACE_MIN = 30                                       # مهلة للتعويض بعد 10:00 مساءً
+MIN_GAP_MIN = 20                                     # أقل فاصل بين منشورين
 
 def parse(s):
     return dt.datetime.fromisoformat(s)
 
 def should_post(now, posts, manual=False):
-    """هل يجب النشر الآن؟ يعوّض المنشورات الفائتة إذا تأخر GitHub."""
+    """يوزّع المنشورات بالتساوي بين 7:00 و22:00 بتوقيت نيويورك، ويعوّض ما فاته."""
     if manual:
         return True, "manual run"
-    ws = now.replace(hour=START_H, minute=0, second=0, microsecond=0)
-    if now < ws:
-        ws -= dt.timedelta(days=1)
-    elapsed_h = (now - ws).total_seconds() / 3600
-    if elapsed_h >= WINDOW_H:
-        return False, "outside posting window"
-    due = min(SLOTS, int(elapsed_h) + 1)
+    now_et = now.astimezone(TZ)
+    start = now_et.replace(hour=START_HOUR, minute=0, second=0, microsecond=0)
+    end = now_et.replace(hour=END_HOUR, minute=0, second=0, microsecond=0)
+    if now_et < start or now_et > end + dt.timedelta(minutes=GRACE_MIN):
+        return False, f"outside US posting hours ({START_HOUR}:00-{END_HOUR}:00 ET)"
+    span_min = (end - start).total_seconds() / 60
+    step = span_min / (SLOTS - 1) if SLOTS > 1 else span_min
+    elapsed_min = (now_et - start).total_seconds() / 60
+    due = min(SLOTS, int(elapsed_min / step) + 1)
     times = [parse(p["posted_at"]) for p in posts if p.get("posted_at")]
-    today = [t for t in times if t >= ws]
+    today = [t for t in times if t >= start]
     if len(today) >= due:
         return False, f"up to date ({len(today)}/{due})"
     if today and (now - max(today)).total_seconds() < MIN_GAP_MIN * 60:
