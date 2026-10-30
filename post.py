@@ -7,11 +7,11 @@ H = {"Authorization": f"Bearer {TOKEN}", "X-Restli-Protocol-Version": "2.0.0"}
 from zoneinfo import ZoneInfo
 
 TZ = ZoneInfo("America/New_York")                    # يتكيف تلقائياً مع التوقيت الصيفي والشتوي
-SLOTS = int(os.environ.get("LI_POSTS_PER_DAY", 24))  # عدد المنشورات يومياً
+SLOTS = int(os.environ.get("LI_POSTS_PER_DAY", 15))  # عدد المنشورات يومياً
 START_HOUR = 7                                       # 7:00 صباحاً بتوقيت نيويورك
 END_HOUR = 22                                        # 10:00 مساءً بتوقيت نيويورك
 GRACE_MIN = 30                                       # مهلة للتعويض بعد 10:00 مساءً
-MIN_GAP_MIN = 20                                     # أقل فاصل بين منشورين
+MIN_GAP_RATIO = 0.7                                  # أقل فاصل = 70% من الفاصل المثالي (تمنع تقارب المنشورات عند التعويض)
 
 def parse(s):
     return dt.datetime.fromisoformat(s)
@@ -33,7 +33,8 @@ def should_post(now, posts, manual=False):
     today = [t for t in times if t >= start]
     if len(today) >= due:
         return False, f"up to date ({len(today)}/{due})"
-    if today and (now - max(today)).total_seconds() < MIN_GAP_MIN * 60:
+    min_gap = max(20, int(step * MIN_GAP_RATIO))
+    if today and (now - max(today)).total_seconds() < min_gap * 60:
         return False, "too soon after last post"
     return True, f"behind schedule ({len(today)}/{due})"
 
