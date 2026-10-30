@@ -29,7 +29,7 @@ jobs:
       - run: python generate.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          POSTS_PER_DAY: "24"
+          POSTS_PER_DAY: "15"
           FORCE: ${{ inputs.force }}
       - run: python pins.py
         env:
