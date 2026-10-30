@@ -8,7 +8,7 @@ OPENAI_KEY = os.environ["OPENAI_API_KEY"]
 MODEL = "gpt-4o-mini"
 HEADERS = {"User-Agent": "Mozilla/5.0 (NextJobyPostBot)"}
 MAX_SCAN = int(os.environ.get("MAX_SCAN", 1500))  # أحدث 1500 وظيفة (نفلتر منها IT/هندسة)
-POSTS_PER_DAY = int(os.environ.get("POSTS_PER_DAY", 24))
+POSTS_PER_DAY = int(os.environ.get("POSTS_PER_DAY", 15))
 FORCE = os.environ.get("FORCE", "").lower() == "true"   # إعادة التوليد الآن
 QUEUE_FILE = "posts.json"
 
@@ -65,7 +65,8 @@ STRONG_BLOCK = [
     "draftkings", "fanduel", "caesars", "mgm resorts",
     "brewery", "brewing company", "distillery", "winery", "liquor", "alcoholic beverage",
     "tobacco", "cigarette", "cigar", "vaping", "philip morris", "altria",
-    "adult entertainment", "strip club", "nightclub", "escort",
+    "adult entertainment", "adult content", "adult store", "strip club", "nightclub", "escort",
+    "onlyfans", "pornography", "cannabis", "marijuana", "dispensary",
     "payday loan", "mortgage lender", "mortgage loans", "consumer lending", "credit union",
 ]
 # (ب) عادية: تُفحص في العنوان وأول 1000 حرف من الوصف (مقدمة الشركة) فقط،
