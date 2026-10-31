@@ -1498,5 +1498,95 @@
     "posted": true,
     "batch": "2026-10-30",
     "posted_at": "2026-10-31T02:00:12.673404+00:00"
+  },
+  {
+    "title": "Platform Performance Engineer Position in Naperville, IL",
+    "description": "Optomi is hiring a Platform Performance Engineer in Naperville, IL. The role involves designing and fortifying cloud infrastructure, focusing on Amazon Connect and Lex V2, as well as developing Lambda integrations using Python. Candidates should have expertise in Node.js development and Salesforce application lifecycle management. If you are looking to enhance your career in cloud engineering, this opportunity is for you. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/platform-performance-engineer/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/b6ce5ae50ae6.png",
+    "keywords": "Platform Performance Engineer,AWS,Node.js,Cloud Engineering,Salesforce,Naperville",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "Product Test Engineer at Astec Industries in Yankton, SD",
+    "description": "Astec Industries is hiring a Product Test Engineer in Yankton, SD. This role involves conducting thorough testing of products to validate design specifications and performance standards. The engineer will collaborate with engineering teams to resolve product issues and develop test plans for new product launches. Strong analytical skills and experience with product testing methodologies are essential. Interested candidates can apply on NextJoby.",
+    "link": "https://nextjoby.com/job/product-test-engineer-2/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/9ed071d08c4e.png",
+    "keywords": "Product Test Engineer,Yankton SD,Astec Industries,engineering jobs,manufacturing,quality assurance",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "Telecommute Software Application Specialist - New York, NY",
+    "description": "A promising startup in New York, NY is hiring a Telecommute Software Application Specialist to enhance their suite of creator tools. This role involves designing and implementing new features to improve user experience, collaborating with cross-functional teams, and troubleshooting software application issues. Candidates should have proficiency in TypeScript and full stack development. Interested applicants are encouraged to apply on NextJoby.",
+    "link": "https://nextjoby.com/job/telecommute-software-application-specialist-29/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/24abb012911e.png",
+    "keywords": "Telecommute,Software Application Specialist,New York,TypeScript,hiring,apply",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "AI Engineering Architect Position in Lafayette, LA",
+    "description": "An AI Engineering Architect is hiring in Lafayette, LA. This role involves designing and developing enterprise-grade Generative AI solutions, collaborating with the AI Center of Excellence, and establishing reusable architecture patterns for multi-agent orchestration. Candidates should have proficiency in Python, experience with Large Language Models, and a strong understanding of AI governance. Interested professionals are encouraged to apply. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/ai-engineering-architect-2/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/c6ee803dcef5.png",
+    "keywords": "AI Engineering Architect,Lafayette LA,Generative AI,Python,AI governance,Tech Jobs",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "Senior System Administrator (MSP / Hybrid WFH) - Chicago, IL",
+    "description": "A Managed Services Provider in Chicago, IL is hiring a Senior System Administrator to tackle complex technical challenges and drive infrastructure projects. The role involves leading technical escalations, managing Azure Virtual Desktop environments, and providing client-facing support. Ideal candidates will have strong problem-solving skills and experience with cloud services. This is a full-time hybrid position with client site visits as needed. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/senior-system-administrator-msp-hybrid-wfh/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/5b87458f2158.png",
+    "keywords": "Senior System Administrator,MSP,Hybrid Work,Chicago Jobs,Cloud Computing,IT Careers",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "Senior Network Engineer Position in Arlington, VA",
+    "description": "ValidaTek is hiring a Senior Network Engineer in Arlington, VA. This role involves designing and implementing advanced network solutions tailored to client needs, as well as monitoring and troubleshooting network performance to ensure optimal efficiency. The ideal candidate will have strong expertise in network architecture and design, along with experience in network security measures. Interested candidates can apply on NextJoby.",
+    "link": "https://nextjoby.com/job/senior-network-engineer-16/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/df881b1e7199.png",
+    "keywords": "Senior Network Engineer,network engineering,IT jobs,Arlington VA,ValidaTek,network security",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "AI Software Engineer at Boardy in New York, NY",
+    "description": "Boardy is hiring an AI Software Engineer in New York, NY. This role involves developing and enhancing AI algorithms to facilitate meaningful professional connections and collaborating with cross-functional teams to integrate AI capabilities into the Boardy platform. Candidates should have proficiency in programming languages such as Python or Java and experience with machine learning frameworks. Interested applicants can apply on NextJoby.",
+    "link": "https://nextjoby.com/job/ai-software-engineer/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/9ec55b442513.png",
+    "keywords": "AI Software Engineer,Boardy,New York,hiring,apply,tech careers",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "Junior AI Security Engineer in New York, NY",
+    "description": "A New York team is hiring a Junior AI Security Engineer to enhance cybersecurity measures using AI and machine learning. The role involves implementing AI solutions for threat detection and response, analyzing security logs to identify anomalies, and collaborating with senior engineers to improve security protocols. Candidates should have proficiency in Python, familiarity with machine learning concepts, and a strong interest in AI technologies. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/junior-ai-security-engineer-2/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/a4c1a05403e0.png",
+    "keywords": "Junior AI Security Engineer,New York jobs,cybersecurity,AI,machine learning,entry-level tech jobs",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "APIGEE Lead Developer Position in Charlotte, NC",
+    "description": "A leading company in Charlotte, NC is hiring an APIGEE Lead Developer. This role involves designing and implementing integration strategies for API management and leading the migration process from APIGEE Edge to APIGEE X. Candidates should have proficiency in APIGEE products, strong integration development experience, and excellent problem-solving skills. Interested applicants are encouraged to apply on NextJoby.",
+    "link": "https://nextjoby.com/job/apigee-lead-developer/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/e224c4b88b91.png",
+    "keywords": "APIGEE Lead Developer,API Management,Charlotte NC Jobs,Tech Jobs,Software Development,Integration Expert",
+    "posted": false,
+    "batch": "2026-10-31"
+  },
+  {
+    "title": "IT Infor M3/ION System Engineer in Teaneck, NJ",
+    "description": "A leading company in Teaneck, NJ is hiring an IT Infor M3/ION System Engineer. This role involves leading ERP initiatives and architecting complex integration solutions using Infor ION technology. The ideal candidate will have proven experience with Infor M3 and Movex ERP systems, as well as expertise in cloud-based ERP implementation. If you're ready to elevate your career and make an impact, apply on NextJoby.",
+    "link": "https://nextjoby.com/job/it-infor-m3-ion-system-engineer/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/d9b229c64d43.png",
+    "keywords": "IT Jobs,Infor M3,ERP,ION Integration,Cloud Engineering,Teaneck Jobs",
+    "posted": false,
+    "batch": "2026-10-31"
   }
 ]
