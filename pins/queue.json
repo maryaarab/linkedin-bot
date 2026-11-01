@@ -1665,8 +1665,9 @@
     "link": "https://nextjoby.com/job/software-engineerpython-c-linux/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/5ef29de7e45a.png",
     "keywords": "Software Engineer,C++,Python,Linux,New York Jobs,Tech Careers",
-    "posted": false,
-    "batch": "2026-11-01"
+    "posted": true,
+    "batch": "2026-11-01",
+    "posted_at": "2026-11-01T21:30:13.379225+00:00"
   },
   {
     "title": "Systems Engineer, Managed Service Provider at HCLTech in Lynnwood, WA",
