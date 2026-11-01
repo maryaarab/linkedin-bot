@@ -1605,8 +1605,9 @@
     "link": "https://nextjoby.com/job/testing-engineering-m-f/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/8d103196e0a2.png",
     "keywords": "Testing Engineering,QA Jobs,Global Payments,Indiana Jobs,Hardware Testing,Device Testing",
-    "posted": false,
-    "batch": "2026-11-01"
+    "posted": true,
+    "batch": "2026-11-01",
+    "posted_at": "2026-11-01T12:00:14.037940+00:00"
   },
   {
     "title": "Salesforce Architect Position Available in Rockville, MD",
