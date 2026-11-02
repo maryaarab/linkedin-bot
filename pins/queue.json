@@ -1685,8 +1685,9 @@
     "link": "https://nextjoby.com/job/general-engineering/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/93dde423c62c.png",
     "keywords": "Engineering Manager,California jobs,software engineering,Golang,cloud computing,remote teams",
-    "posted": false,
-    "batch": "2026-11-01"
+    "posted": true,
+    "batch": "2026-11-01",
+    "posted_at": "2026-11-02T00:30:12.597321+00:00"
   },
   {
     "title": "Embedded Software Engineer Student Experience – Spring 2027 in Bismarck, ND",
