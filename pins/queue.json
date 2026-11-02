@@ -1745,8 +1745,9 @@
     "link": "https://nextjoby.com/job/full-stack-engineer-26/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/3c050db2dbfc.png",
     "keywords": "Full Stack Engineer,Baltimore MD,Tech Jobs,Healthcare,Angular,ReactJS",
-    "posted": false,
-    "batch": "2026-11-02"
+    "posted": true,
+    "batch": "2026-11-02",
+    "posted_at": "2026-11-02T18:30:24.011243+00:00"
   },
   {
     "title": "Principal AI Solutions Engineer (Contract) in Miami, FL",
