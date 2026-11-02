@@ -1735,8 +1735,9 @@
     "link": "https://nextjoby.com/job/microsoft-azure-data-engineer/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/991ca78fcd9d.png",
     "keywords": "Azure Data Engineer,Greenfield IN,Data Engineering,Azure Databricks,Azure Data Factory,US Jobs",
-    "posted": false,
-    "batch": "2026-11-02"
+    "posted": true,
+    "batch": "2026-11-02",
+    "posted_at": "2026-11-02T17:00:24.050598+00:00"
   },
   {
     "title": "Full Stack Engineer Position in Baltimore, MD",
