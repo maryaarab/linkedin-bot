@@ -4717,8 +4717,9 @@
     "text": "🚀 Release Train Engineer | Chicago, IL 🇺🇸\n\nThis role is ideal for individuals with a strong technical background who thrive in a collaborative environment while managing complex release processes. The position focuses on enhancing the efficiency of DevOps practices and coordinating efforts across multiple teams.\n\n📍 Chicago, IL  \n💼 Full-time  \n\nWhat you'll work on:  \n➡️ Drive and facilitate release planning and execution across development, architecture, security, and operations teams.  \n➡️ Ensure smooth deployment of applications using Azure and Azure Kubernetes Service (AKS).  \n➡️ Develop and maintain YAML-based CI/CD pipelines utilizing Azure DevOps or GitHub Actions.  \n➡️ Troubleshoot and resolve issues related to deployments, networking, and API performance.  \n➡️ Implement monitoring solutions using tools like Prometheus or Grafana to ensure system reliability.  \n➡️ Oversee incident response and root-cause analysis for production environments.  \n➡️ Manage Azure networking components, including REST APIs, DNS, and load balancing setups.\n\nSkills that can help you stand out:  \n✅ Hands-on experience with Microsoft Azure and AKS.  \n✅ Strong understanding of Azure networking, TLS, and managed identities.  \n✅ Knowledge of disaster recovery and workload identity practices.  \n✅ Familiarity with Azure API Management and private AKS networking.  \n✅ Experience in financial services or regulated environments.  \n✅ Relevant certifications in Azure, Kubernetes, or Azure DevOps.\n\n👉 View the full details & apply:  \nhttps://nextjoby.com/job/release-train-engineer/?utm_source=linkedin\n\n#ReleaseTrainEngineer #ChicagoJobs #DevOps #AzureJobs #Kubernetes #USJobs #ITCareers #TechJobs",
     "location": "Chicago, IL",
     "category": "General Careers",
-    "posted": false,
-    "batch": "2026-11-06"
+    "posted": true,
+    "batch": "2026-11-06",
+    "posted_at": "2026-11-06T21:00:22.768563+00:00"
   },
   {
     "url": "https://nextjoby.com/job/remote-microsoft-purview-cloud-dlp-engineer/",
