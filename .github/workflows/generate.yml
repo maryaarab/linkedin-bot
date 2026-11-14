@@ -30,6 +30,8 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           POSTS_PER_DAY: "15"
+          LIST_SORT: ""          # ضع هنا صيغة الترتيب بالأحدث إن عرفتها، مثل: orderby=newest (اسأل Claude)
+          LINK_MODE: "site"      # site = رابط صفحتك | jooble = رابط Jooble المباشر في منشورات LinkedIn
           FORCE: ${{ inputs.force }}
       - run: python pins.py
         env:
