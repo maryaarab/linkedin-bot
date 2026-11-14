@@ -7,9 +7,12 @@ LIST_QUERY = "jobs_ppp=384"
 OPENAI_KEY = os.environ["OPENAI_API_KEY"]
 MODEL = "gpt-4o-mini"
 HEADERS = {"User-Agent": "Mozilla/5.0 (NextJobyPostBot)"}
-MAX_SCAN = int(os.environ.get("MAX_SCAN", 1500))  # أحدث 1500 وظيفة (نفلتر منها IT/هندسة)
+MAX_SCAN = int(os.environ.get("MAX_SCAN", 1500))  # نمسح أولاً أول 1500 وظيفة
+MAX_SCAN_HARD = int(os.environ.get("MAX_SCAN_HARD", 8000))  # سقف التوسع إن لم نجد وظائف تقنية كافية
+LIST_SORT = os.environ.get("LIST_SORT", "")   # مثال: "orderby=newest" (انظر الشرح) يُضاف إلى رابط القائمة
 POSTS_PER_DAY = int(os.environ.get("POSTS_PER_DAY", 15))
 FORCE = os.environ.get("FORCE", "").lower() == "true"   # إعادة التوليد الآن
+LINK_MODE = os.environ.get("LINK_MODE", "site").lower()  # site = رابط صفحتك | jooble = رابط التقديم المباشر
 QUEUE_FILE = "posts.json"
 
 # تصنيفات لا تناسب جمهور LinkedIn الأمريكي
@@ -90,19 +93,54 @@ def blocked(job):
     head = job["title"] + " " + job["desc"][:1000]
     return bool(WEAK_RX.search(head) or STRONG_RX.search(job["title"] + " " + job["desc"]))
 
-def get(url):
-    r = requests.get(url, headers=HEADERS, timeout=60)
-    r.raise_for_status()
-    return r.text
+BROWSER_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
-def scan_listings():
-    seen, cards, page = set(), [], 1
-    while len(cards) < MAX_SCAN:
-        base = f"{BASE}/jobs/" if page == 1 else f"{BASE}/jobs/page/{page}/"
+def get(url, tries=3):
+    last = ""
+    for i in range(tries):
         try:
-            soup = BeautifulSoup(get(f"{base}?{LIST_QUERY}"), "html.parser")
-        except Exception as e:
+            r = requests.get(url, headers=BROWSER_HEADERS, timeout=60)
+            if r.status_code in (403, 429) or r.status_code >= 500:
+                last = f"HTTP {r.status_code}"
+                time.sleep(5 * (i + 1)); continue
+            r.raise_for_status()
+            return r.text
+        except requests.RequestException as e:
+            last = str(e)[:150]
+            time.sleep(5 * (i + 1))
+    raise RuntimeError(f"{url} -> {last}")
+
+LIST_QUERIES = [LIST_QUERY, "jobs_ppp=96", ""]     # إن فشل الحجم الكبير نجرّب أصغر ثم العادي
+
+def _page_url(page, q):
+    base = f"{BASE}/jobs/" if page == 1 else f"{BASE}/jobs/page/{page}/"
+    qs = "&".join(x for x in (q, LIST_SORT) if x)
+    return base + (f"?{qs}" if qs else "")
+
+def scan_listings(done_urls=frozenset(), pool_target=90):
+    # نختار أول صيغة تعمل على الصفحة الأولى
+    q, first_html, errors = None, None, []
+    for cand in LIST_QUERIES:
+        try:
+            first_html = get(_page_url(1, cand)); q = cand; break
+        except RuntimeError as e:
+            errors.append(str(e)); print("listing failed:", e)
+    if first_html is None:
+        raise RuntimeError("Cannot read the jobs listing (site blocks the bot or is down): " + " | ".join(errors))
+    print("listing query in use:", repr(q))
+    seen, cards, page, usable = set(), [], 1, 0
+    while True:
+        if len(cards) >= MAX_SCAN_HARD or (len(cards) >= MAX_SCAN and usable >= pool_target):
+            break
+        try:
+            html = first_html if page == 1 else get(_page_url(page, q))
+        except RuntimeError as e:
             print("stop at page", page, e); break
+        soup = BeautifulSoup(html, "html.parser")
         found = 0
         for h in soup.select("h2 a[href*='/job/']"):
             link = h["href"]
@@ -116,10 +154,16 @@ def scan_listings():
                 "category": cat.get_text(strip=True) if cat else "General",
                 "location": loc.get_text(strip=True) if loc else "USA",
             })
-        print(f"page {page}: +{found} (total {len(cards)})")
+            c = cards[-1]
+            if c["url"] not in done_urls and is_tech(c["title"]) and not any(x in c["category"] for x in EXCLUDE):
+                usable += 1
+        print(f"page {page}: +{found} (total {len(cards)}, tech not yet posted: {usable})")
         if found == 0: break
         page += 1
         time.sleep(2)
+    if not cards:
+        raise RuntimeError("Listing page loaded but no job cards were found (site layout changed?)")
+    print(f"scan finished: {len(cards)} jobs scanned, {usable} tech jobs not posted yet")
     return cards
 
 def diversify(cards, n, done_urls):
@@ -128,6 +172,9 @@ def diversify(cards, n, done_urls):
              and is_tech(c["title"])
              and not any(x in c["category"] for x in EXCLUDE)]
     print("tech candidates:", len(cards))
+    if not cards:
+        print("WARNING: no new tech jobs found. Either everything scanned was already posted "
+              "(site not sorted by newest / import stalled) or the filters are too strict.")
     # بدون خلط: نحافظ على ترتيب الموقع (الأحدث أولاً)
     by_cat = defaultdict(list)
     for c in cards: by_cat[c["category"]].append(c)
@@ -157,7 +204,14 @@ def parse_job(url):
     text = soup.get_text("\n", strip=True)
     desc = text.split("Job Description", 1)[-1]
     desc = re.split(r"Verified Remote Jobs|Share this post", desc)[0]
-    return {"url": url, "title": title,
+    apply_url = ""
+    for a in soup.find_all("a", href=True):
+        if a.get_text(strip=True).lower() in ("apply now", "apply") and "jooble" in a["href"]:
+            apply_url = a["href"]; break
+    if not apply_url:                                   # احتياط: أول رابط jooble في الصفحة
+        a = soup.find("a", href=re.compile(r"jooble\.org/redirect"))
+        apply_url = a["href"] if a else ""
+    return {"url": url, "apply_url": apply_url, "title": title,
             "location": loc.get_text(strip=True) if loc else "USA",
             "category": cat.get_text(strip=True) if cat else "General",
             "desc": desc[:4500]}
@@ -178,7 +232,7 @@ def is_real(job):
     return True
 
 def pick_diverse(n, done_urls):
-    cards = scan_listings()
+    cards = scan_listings(done_urls, pool_target=max(90, n * 6))
     chosen, fps = [], set()
     for c in diversify(cards, n + 60, done_urls):
         try: j = parse_job(c["url"])
@@ -248,7 +302,10 @@ RULES:
 - Total length under 2500 characters. Return only the post text."""
 
 def gen(job, i):
-    link = job["url"] + "?utm_source=linkedin"
+    if LINK_MODE == "jooble" and job.get("apply_url"):
+        link = job["apply_url"]                         # رابط Jooble المباشر كما هو (فيه تتبع الإحالة)
+    else:
+        link = job["url"] + "?utm_source=linkedin"      # رابط صفحتك
     state = job["location"].split(",")[-1].strip()
     style = STYLES[i % len(STYLES)].replace("{state}", state)
     bullet = BULLETS[i % len(BULLETS)]
@@ -267,34 +324,47 @@ def gen(job, i):
             print("too long, retrying"); continue
         if FIRST_PERSON.search(text) and attempt < 2:   # صيغة المتكلم ممنوعة
             print("first-person voice, retrying"); continue
-        if job["url"] not in text:               # نضمن وجود رابط التقديم
+        if link.split("?")[0] not in text:       # نضمن وجود رابط التقديم
             text += f"\n\n👉 Apply: {link}"
         return text
     return None
 
 def build_queue(queue, today, pick_fn, gen_fn, n):
-    """دفعة جديدة كل يوم: تُحذف المنشورات القديمة غير المنشورة، وتُولَّد n جديدة."""
+    """دفعة جديدة كل يوم. تُحذف القديمة غير المنشورة فقط إذا نجح توليد الجديدة.
+       تعيد (الطابور، نجح؟)."""
     if not FORCE and any(p.get("batch") == today for p in queue):
         print("Today's batch already generated, skipping.")
-        return queue
-    stale = sum(1 for p in queue if not p["posted"])
-    queue = [p for p in queue if p["posted"]]          # نحتفظ بالمنشور فقط (للسجل ومنع التكرار)
-    done_urls = {p["url"] for p in queue}
-    print(f"dropped {stale} stale unposted posts; generating {n} fresh ones")
-    for i, j in enumerate(pick_fn(n, done_urls)):
-        t = gen_fn(j, i + len(queue))
+        return queue, True
+    posted = [p for p in queue if p["posted"]]
+    done_urls = {p["url"] for p in posted}
+    print(f"generating {n} fresh posts (keeping {len(posted)} posted for history)")
+    try:
+        jobs = pick_fn(n, done_urls)
+    except Exception as e:                      # الموقع يحجب الروبوت، أو خطأ آخر
+        print("ERROR while fetching jobs:", e)
+        return queue, False
+    fresh = []
+    for i, j in enumerate(jobs):
+        t = gen_fn(j, i + len(posted))
         if t:
-            queue.append({"url": j["url"], "title": j["title"], "text": t,
+            fresh.append({"url": j["url"], "title": j["title"], "text": t,
                           "location": j.get("location", "USA"),
                           "category": j.get("category", "General"),
                           "posted": False, "batch": today})
         time.sleep(1)
-    return queue
+    if not fresh:
+        print("ERROR: 0 posts generated (no matching jobs, or the OpenAI API failed). Keeping the old queue.")
+        return queue, False
+    stale = sum(1 for p in queue if not p["posted"])
+    print(f"dropped {stale} stale unposted posts; added {len(fresh)} fresh ones")
+    return posted + fresh, True
 
 if __name__ == "__main__":
     queue = json.load(open(QUEUE_FILE, encoding="utf-8")) if os.path.exists(QUEUE_FILE) else []
     today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
-    queue = build_queue(queue, today, pick_diverse, gen, POSTS_PER_DAY)
+    queue, ok = build_queue(queue, today, pick_diverse, gen, POSTS_PER_DAY)
     queue = queue[-600:]
     json.dump(queue, open(QUEUE_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     print("Queue size:", len(queue), "| unposted:", sum(1 for p in queue if not p["posted"]))
+    if not ok:
+        raise SystemExit(1)          # يجعل التشغيل أحمر في GitHub بدل أن يفشل بصمت
