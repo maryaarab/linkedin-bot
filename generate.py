@@ -1,4 +1,6 @@
 import requests, json, re, time, os, random, datetime
+import html as htmllib
+import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from collections import Counter, defaultdict
 
@@ -104,6 +106,8 @@ def get(url, tries=3):
     for i in range(tries):
         try:
             r = requests.get(url, headers=BROWSER_HEADERS, timeout=60)
+            if r.status_code == 404:
+                raise RuntimeError(f"{url} -> HTTP 404")
             if r.status_code in (403, 429) or r.status_code >= 500:
                 last = f"HTTP {r.status_code}"
                 time.sleep(5 * (i + 1)); continue
@@ -114,57 +118,174 @@ def get(url, tries=3):
             time.sleep(5 * (i + 1))
     raise RuntimeError(f"{url} -> {last}")
 
-LIST_QUERIES = [LIST_QUERY, "jobs_ppp=96", ""]     # إن فشل الحجم الكبير نجرّب أصغر ثم العادي
+# فحص سريع: ما الذي يردّ به الموقع على أنواع الصفحات؟ (يظهر في السجل ويحدد المشكلة فوراً)
+def probe():
+    for path in ("/", "/jobs/", "/wp-json/", "/wp-json/wp/v2/job_listing?per_page=1", "/feed/", "/sitemap_index.xml"):
+        try:
+            r = requests.get(BASE + path, headers=BROWSER_HEADERS, timeout=20)
+            print(f"  probe {r.status_code}  {path}  ({len(r.content)} bytes)")
+        except Exception as e:
+            print(f"  probe ERR  {path}  {str(e)[:80]}")
+
+def _unesc(t):
+    return htmllib.unescape(re.sub(r"<[^>]+>", "", t or "")).strip()
+
+def _slug_title(url):
+    slug = url.rstrip("/").split("/")[-1]
+    slug = re.sub(r"-\d+$", "", slug)
+    return slug.replace("-", " ").strip().title()
+
+def _card(url, title, category="General", location="USA"):
+    return {"url": url, "title": title, "category": category, "location": location}
+
+# ===== المصدر 1: واجهة WordPress REST (الأحدث أولاً، وبها تاريخ) =====
+def _rest_base():
+    try:
+        types = json.loads(get(f"{BASE}/wp-json/wp/v2/types", tries=2))
+        for k, v in types.items():
+            if "job" in k.lower() and v.get("rest_base") and not re.search(r"alert|apply|applicant|resume|cv", k, re.I):
+                return v["rest_base"]
+    except Exception as e:
+        print("  rest: could not discover post type:", str(e)[:120])
+    return os.environ.get("REST_BASE", "job_listing")
+
+def gen_rest():
+    base, page = _rest_base(), 1
+    print("  rest base:", base)
+    while True:
+        url = f"{BASE}/wp-json/wp/v2/{base}?per_page=100&page={page}&orderby=date&order=desc&_fields=link,title,date"
+        try:
+            data = json.loads(get(url, tries=2))
+        except (RuntimeError, ValueError) as e:
+            if page == 1: raise
+            return
+        if not data: return
+        yield [_card(it["link"], _unesc(it["title"]["rendered"])) for it in data if it.get("link")]
+        if len(data) < 100: return
+        page += 1
+        time.sleep(1)
+
+# ===== المصدر 2: RSS (الأحدث أولاً) =====
+def gen_rss():
+    ptype = os.environ.get("RSS_POST_TYPE", "job_listing")
+    for page in range(1, 151):
+        try:
+            root = ET.fromstring(get(f"{BASE}/feed/?post_type={ptype}&paged={page}", tries=2).encode("utf-8"))
+        except (RuntimeError, ET.ParseError) as e:
+            if page == 1: raise
+            return
+        items = root.findall("./channel/item")
+        if not items: return
+        yield [_card((i.findtext("link") or "").strip(), (i.findtext("title") or "").strip(),
+                     (i.findtext("category") or "General").strip()) for i in items if i.findtext("link")]
+        time.sleep(1)
+
+# ===== المصدر 3: صفحات القائمة HTML (مع رجوع إلى أحجام أصغر) =====
+LIST_QUERIES = [LIST_QUERY, "jobs_ppp=96", ""]
 
 def _page_url(page, q):
     base = f"{BASE}/jobs/" if page == 1 else f"{BASE}/jobs/page/{page}/"
     qs = "&".join(x for x in (q, LIST_SORT) if x)
     return base + (f"?{qs}" if qs else "")
 
-def scan_listings(done_urls=frozenset(), pool_target=90):
-    # نختار أول صيغة تعمل على الصفحة الأولى
-    q, first_html, errors = None, None, []
+def _html_cards(html):
+    soup = BeautifulSoup(html, "html.parser")
+    out = []
+    for h in soup.select("h2 a[href*='/job/']"):
+        cat = h.find_next("a", href=re.compile("/job-category/"))
+        loc = h.find_next("a", href=re.compile("/job-location/"))
+        out.append(_card(h["href"], h.get_text(strip=True),
+                         cat.get_text(strip=True) if cat else "General",
+                         loc.get_text(strip=True) if loc else "USA"))
+    return out
+
+def gen_html():
+    q, first, errors = None, None, []
     for cand in LIST_QUERIES:
         try:
-            first_html = get(_page_url(1, cand)); q = cand; break
+            first = get(_page_url(1, cand), tries=2); q = cand; break
         except RuntimeError as e:
-            errors.append(str(e)); print("listing failed:", e)
-    if first_html is None:
-        raise RuntimeError("Cannot read the jobs listing (site blocks the bot or is down): " + " | ".join(errors))
-    print("listing query in use:", repr(q))
-    seen, cards, page, usable = set(), [], 1, 0
+            errors.append(str(e)); print("  html listing failed:", str(e)[:140])
+    if first is None:
+        raise RuntimeError("html listing unreachable: " + " | ".join(errors))
+    print("  html listing query in use:", repr(q))
+    page = 1
     while True:
-        if len(cards) >= MAX_SCAN_HARD or (len(cards) >= MAX_SCAN and usable >= pool_target):
-            break
         try:
-            html = first_html if page == 1 else get(_page_url(page, q))
+            html = first if page == 1 else get(_page_url(page, q), tries=2)
         except RuntimeError as e:
-            print("stop at page", page, e); break
-        soup = BeautifulSoup(html, "html.parser")
-        found = 0
-        for h in soup.select("h2 a[href*='/job/']"):
-            link = h["href"]
-            if link in seen: continue
-            seen.add(link); found += 1
-            cat = h.find_next("a", href=re.compile("/job-category/"))
-            loc = h.find_next("a", href=re.compile("/job-location/"))
-            cards.append({
-                "url": link,
-                "title": h.get_text(strip=True),
-                "category": cat.get_text(strip=True) if cat else "General",
-                "location": loc.get_text(strip=True) if loc else "USA",
-            })
-            c = cards[-1]
-            if c["url"] not in done_urls and is_tech(c["title"]) and not any(x in c["category"] for x in EXCLUDE):
-                usable += 1
-        print(f"page {page}: +{found} (total {len(cards)}, tech not yet posted: {usable})")
-        if found == 0: break
+            print("  html: stop at page", page, str(e)[:100]); return
+        cards = _html_cards(html)
+        if not cards: return
+        yield cards
         page += 1
         time.sleep(2)
-    if not cards:
-        raise RuntimeError("Listing page loaded but no job cards were found (site layout changed?)")
-    print(f"scan finished: {len(cards)} jobs scanned, {usable} tech jobs not posted yet")
-    return cards
+
+# ===== المصدر 4: خريطة الموقع (احتياط أخير) =====
+def gen_sitemap():
+    ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    maps, errs = [], []
+    for idx in ("sitemap_index.xml", "wp-sitemap.xml"):
+        try:
+            root = ET.fromstring(get(f"{BASE}/{idx}", tries=2).encode("utf-8"))
+        except (RuntimeError, ET.ParseError) as e:
+            errs.append(str(e)[:100]); continue
+        for sm in root.findall("s:sitemap", ns):
+            loc = sm.findtext("s:loc", "", ns)
+            if "job" in loc.lower() and "employer" not in loc.lower():
+                maps.append((sm.findtext("s:lastmod", "", ns), loc))
+        if maps: break
+    if not maps:
+        raise RuntimeError("no job sitemaps found: " + " | ".join(errs))
+    maps.sort(reverse=True)                      # الأحدث تعديلاً أولاً
+    for _, loc in maps[:12]:
+        try:
+            x = ET.fromstring(get(loc, tries=2).encode("utf-8"))
+        except (RuntimeError, ET.ParseError):
+            continue
+        ent = sorted(((u.findtext("s:lastmod", "", ns), u.findtext("s:loc", "", ns)) for u in x.findall("s:url", ns)), reverse=True)
+        yield [_card(l, _slug_title(l)) for _, l in ent if l]
+        time.sleep(1)
+
+SOURCES = {"rest": gen_rest, "rss": gen_rss, "html": gen_html, "sitemap": gen_sitemap}
+
+def is_usable(c, done_urls):
+    return (c["url"] not in done_urls and is_tech(c["title"])
+            and not any(x in c["category"] for x in EXCLUDE))
+
+def consume(gen, done_urls, pool_target):
+    seen, cards, usable = set(), [], 0
+    for batch in gen:
+        for c in batch:
+            if c["url"] in seen: continue
+            seen.add(c["url"]); cards.append(c)
+            if is_usable(c, done_urls): usable += 1
+        print(f"  +{len(batch)} (total {len(cards)}, tech not posted yet: {usable})")
+        if len(cards) >= MAX_SCAN_HARD or (len(cards) >= MAX_SCAN and usable >= pool_target):
+            break
+    return cards, usable
+
+def scan_listings(done_urls=frozenset(), pool_target=90):
+    """يجرّب المصادر بالترتيب (LIST_SOURCES) ويستعمل أول مصدر يعطي وظائف تقنية كافية."""
+    if os.environ.get("PROBE", "true").lower() == "true":
+        print("== probing the site")
+        probe()
+    order = [x.strip() for x in os.environ.get("LIST_SOURCES", "rest,rss,html,sitemap").split(",") if x.strip() in SOURCES]
+    best, errors = (0, [], ""), []
+    for name in order:
+        print(f"== trying source: {name}")
+        try:
+            cards, usable = consume(SOURCES[name](), done_urls, pool_target)
+        except Exception as e:
+            errors.append(f"{name}: {str(e)[:160]}"); print(f"source '{name}' failed: {str(e)[:160]}"); continue
+        print(f"source '{name}': {len(cards)} jobs scanned, {usable} usable tech jobs")
+        if usable > best[0]: best = (usable, cards, name)
+        if usable >= pool_target: break
+        errors.append(f"{name}: only {usable} usable")
+    if not best[1]:
+        raise RuntimeError("No listing source gave usable jobs: " + " | ".join(errors))
+    print(f"SOURCE IN USE: {best[2]} ({len(best[1])} jobs scanned, {best[0]} usable tech jobs)")
+    return best[1]
 
 def diversify(cards, n, done_urls):
     cards = [c for c in cards
@@ -186,10 +307,12 @@ def diversify(cards, n, done_urls):
         for cat in cats:
             while by_cat[cat]:
                 c = by_cat[cat].pop(0)
-                state = c["location"].split(",")[-1].strip()
-                if too_similar(c["title"], seen_sets) or used_states[state] >= max_per_state:
+                loc = c["location"].strip()
+                state = loc.split(",")[-1].strip() if loc.upper() not in ("", "USA") else ""
+                if too_similar(c["title"], seen_sets) or (state and used_states[state] >= max_per_state):
                     continue
-                seen_sets.append(words(c["title"])); used_states[state] += 1
+                seen_sets.append(words(c["title"]))
+                if state: used_states[state] += 1
                 out.append(c); progressed = True
                 break
             if len(out) >= n: break
@@ -231,12 +354,26 @@ def is_real(job):
         return False
     return True
 
+US_CODES = set("AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC".split())
+US_NAMES = {n.lower() for n in ("Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Rhode Island,South Carolina,South Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming,District of Columbia").split(",")}
+US_ONLY = os.environ.get("US_ONLY", "true").lower() == "true"
+
+def is_us(loc):
+    l = (loc or "").strip().lower()
+    if not l or l in ("usa", "us", "united states", "remote") or "united states" in l or "remote" in l:
+        return True
+    tail = (loc or "").split(",")[-1].strip()
+    return tail.upper() in US_CODES or tail.lower() in US_NAMES or l in US_NAMES
+
 def pick_diverse(n, done_urls):
     cards = scan_listings(done_urls, pool_target=max(90, n * 6))
-    chosen, fps = [], set()
+    chosen, fps, skipped_non_us = [], set(), 0
     for c in diversify(cards, n + 60, done_urls):
         try: j = parse_job(c["url"])
         except Exception as e: print("skip", c["url"], e); continue
+        if any(x in j["category"] for x in EXCLUDE): continue
+        if US_ONLY and not is_us(j["location"]):
+            skipped_non_us += 1; continue
         if not is_real(j): continue
         fp = re.sub(r"\W+", " ", j["desc"].lower())[:150]
         if fp in fps: continue           # نفس الوصف في مدن مختلفة
@@ -245,6 +382,7 @@ def pick_diverse(n, done_urls):
         print(len(chosen), j["title"], "-", j["location"], "|", j["category"])
         if len(chosen) == n: break
         time.sleep(1)
+    if skipped_non_us: print(f"skipped {skipped_non_us} non-US jobs")
     return chosen
 
 FIRST_PERSON = re.compile(r"\b(our client|our team|join our|we are|we're|we want|we offer|we need|we'd|our company|with us|join us)\b", re.I)
