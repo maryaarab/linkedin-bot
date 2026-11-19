@@ -2065,8 +2065,9 @@
     "link": "https://nextjoby.com/job/data-engineer-analyst/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/86dace6b03a1.png",
     "keywords": "Data Engineer,Data Analyst,CACI,Alexandria VA,US Jobs,Data Science",
-    "posted": false,
-    "batch": "2026-11-19"
+    "posted": true,
+    "batch": "2026-11-19",
+    "posted_at": "2026-11-19T21:30:15.132949+00:00"
   },
   {
     "title": "Cloud Native Architect Position at Portworx in Chicago, IL",
