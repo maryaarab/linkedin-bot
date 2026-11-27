@@ -1,105 +1,5 @@
 [
   {
-    "title": "Platform Performance Engineer Position in Naperville, IL",
-    "description": "Optomi is hiring a Platform Performance Engineer in Naperville, IL. The role involves designing and fortifying cloud infrastructure, focusing on Amazon Connect and Lex V2, as well as developing Lambda integrations using Python. Candidates should have expertise in Node.js development and Salesforce application lifecycle management. If you are looking to enhance your career in cloud engineering, this opportunity is for you. Apply on NextJoby.",
-    "link": "https://nextjoby.com/job/platform-performance-engineer/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/b6ce5ae50ae6.png",
-    "keywords": "Platform Performance Engineer,AWS,Node.js,Cloud Engineering,Salesforce,Naperville",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T12:00:13.935953+00:00"
-  },
-  {
-    "title": "Product Test Engineer at Astec Industries in Yankton, SD",
-    "description": "Astec Industries is hiring a Product Test Engineer in Yankton, SD. This role involves conducting thorough testing of products to validate design specifications and performance standards. The engineer will collaborate with engineering teams to resolve product issues and develop test plans for new product launches. Strong analytical skills and experience with product testing methodologies are essential. Interested candidates can apply on NextJoby.",
-    "link": "https://nextjoby.com/job/product-test-engineer-2/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/9ed071d08c4e.png",
-    "keywords": "Product Test Engineer,Yankton SD,Astec Industries,engineering jobs,manufacturing,quality assurance",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T14:00:18.340573+00:00"
-  },
-  {
-    "title": "Telecommute Software Application Specialist - New York, NY",
-    "description": "A promising startup in New York, NY is hiring a Telecommute Software Application Specialist to enhance their suite of creator tools. This role involves designing and implementing new features to improve user experience, collaborating with cross-functional teams, and troubleshooting software application issues. Candidates should have proficiency in TypeScript and full stack development. Interested applicants are encouraged to apply on NextJoby.",
-    "link": "https://nextjoby.com/job/telecommute-software-application-specialist-29/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/24abb012911e.png",
-    "keywords": "Telecommute,Software Application Specialist,New York,TypeScript,hiring,apply",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T15:30:13.975859+00:00"
-  },
-  {
-    "title": "AI Engineering Architect Position in Lafayette, LA",
-    "description": "An AI Engineering Architect is hiring in Lafayette, LA. This role involves designing and developing enterprise-grade Generative AI solutions, collaborating with the AI Center of Excellence, and establishing reusable architecture patterns for multi-agent orchestration. Candidates should have proficiency in Python, experience with Large Language Models, and a strong understanding of AI governance. Interested professionals are encouraged to apply. Apply on NextJoby.",
-    "link": "https://nextjoby.com/job/ai-engineering-architect-2/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/c6ee803dcef5.png",
-    "keywords": "AI Engineering Architect,Lafayette LA,Generative AI,Python,AI governance,Tech Jobs",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T17:00:12.234481+00:00"
-  },
-  {
-    "title": "Senior System Administrator (MSP / Hybrid WFH) - Chicago, IL",
-    "description": "A Managed Services Provider in Chicago, IL is hiring a Senior System Administrator to tackle complex technical challenges and drive infrastructure projects. The role involves leading technical escalations, managing Azure Virtual Desktop environments, and providing client-facing support. Ideal candidates will have strong problem-solving skills and experience with cloud services. This is a full-time hybrid position with client site visits as needed. Apply on NextJoby.",
-    "link": "https://nextjoby.com/job/senior-system-administrator-msp-hybrid-wfh/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/5b87458f2158.png",
-    "keywords": "Senior System Administrator,MSP,Hybrid Work,Chicago Jobs,Cloud Computing,IT Careers",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T18:30:12.383633+00:00"
-  },
-  {
-    "title": "Senior Network Engineer Position in Arlington, VA",
-    "description": "ValidaTek is hiring a Senior Network Engineer in Arlington, VA. This role involves designing and implementing advanced network solutions tailored to client needs, as well as monitoring and troubleshooting network performance to ensure optimal efficiency. The ideal candidate will have strong expertise in network architecture and design, along with experience in network security measures. Interested candidates can apply on NextJoby.",
-    "link": "https://nextjoby.com/job/senior-network-engineer-16/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/df881b1e7199.png",
-    "keywords": "Senior Network Engineer,network engineering,IT jobs,Arlington VA,ValidaTek,network security",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T20:00:17.564901+00:00"
-  },
-  {
-    "title": "AI Software Engineer at Boardy in New York, NY",
-    "description": "Boardy is hiring an AI Software Engineer in New York, NY. This role involves developing and enhancing AI algorithms to facilitate meaningful professional connections and collaborating with cross-functional teams to integrate AI capabilities into the Boardy platform. Candidates should have proficiency in programming languages such as Python or Java and experience with machine learning frameworks. Interested applicants can apply on NextJoby.",
-    "link": "https://nextjoby.com/job/ai-software-engineer/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/9ec55b442513.png",
-    "keywords": "AI Software Engineer,Boardy,New York,hiring,apply,tech careers",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T21:30:10.977639+00:00"
-  },
-  {
-    "title": "Junior AI Security Engineer in New York, NY",
-    "description": "A New York team is hiring a Junior AI Security Engineer to enhance cybersecurity measures using AI and machine learning. The role involves implementing AI solutions for threat detection and response, analyzing security logs to identify anomalies, and collaborating with senior engineers to improve security protocols. Candidates should have proficiency in Python, familiarity with machine learning concepts, and a strong interest in AI technologies. Apply on NextJoby.",
-    "link": "https://nextjoby.com/job/junior-ai-security-engineer-2/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/a4c1a05403e0.png",
-    "keywords": "Junior AI Security Engineer,New York jobs,cybersecurity,AI,machine learning,entry-level tech jobs",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-10-31T23:00:13.667139+00:00"
-  },
-  {
-    "title": "APIGEE Lead Developer Position in Charlotte, NC",
-    "description": "A leading company in Charlotte, NC is hiring an APIGEE Lead Developer. This role involves designing and implementing integration strategies for API management and leading the migration process from APIGEE Edge to APIGEE X. Candidates should have proficiency in APIGEE products, strong integration development experience, and excellent problem-solving skills. Interested applicants are encouraged to apply on NextJoby.",
-    "link": "https://nextjoby.com/job/apigee-lead-developer/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/e224c4b88b91.png",
-    "keywords": "APIGEE Lead Developer,API Management,Charlotte NC Jobs,Tech Jobs,Software Development,Integration Expert",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-11-01T00:30:13.787311+00:00"
-  },
-  {
-    "title": "IT Infor M3/ION System Engineer in Teaneck, NJ",
-    "description": "A leading company in Teaneck, NJ is hiring an IT Infor M3/ION System Engineer. This role involves leading ERP initiatives and architecting complex integration solutions using Infor ION technology. The ideal candidate will have proven experience with Infor M3 and Movex ERP systems, as well as expertise in cloud-based ERP implementation. If you're ready to elevate your career and make an impact, apply on NextJoby.",
-    "link": "https://nextjoby.com/job/it-infor-m3-ion-system-engineer/?utm_source=pinterest&utm_medium=social",
-    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/d9b229c64d43.png",
-    "keywords": "IT Jobs,Infor M3,ERP,ION Integration,Cloud Engineering,Teaneck Jobs",
-    "posted": true,
-    "batch": "2026-10-31",
-    "posted_at": "2026-11-01T02:00:13.545196+00:00"
-  },
-  {
     "title": "Testing Engineering M/F - Global Payments in Jeffersonville, IN",
     "description": "A leading company in payment technology is hiring a Testing Engineer in Jeffersonville, IN. In this role, the engineer will spearhead the onboarding of new hardware platforms and diagnose intricate issues related to devices and connectivity. Candidates should have 3+ years of experience in quality assurance and hands-on experience with payment devices. Apply on NextJoby.",
     "link": "https://nextjoby.com/job/testing-engineering-m-f/?utm_source=pinterest&utm_medium=social",
@@ -2098,5 +1998,95 @@
     "posted": true,
     "batch": "2026-11-26",
     "posted_at": "2026-11-27T02:00:16.707947+00:00"
+  },
+  {
+    "title": "SAP NS2 Information Security Compliance Expert in Herndon, VA",
+    "description": "SAP is hiring an Information Security Compliance Expert in Herndon, VA. This full-time role involves leading compliance initiatives and establishing enterprise control frameworks aligned with standards like ISO 27001 and NIST. The expert will oversee cloud and AI governance, focusing on data security protocols, and mentor compliance professionals to foster a culture of security. Interested candidates can apply on NextJoby.",
+    "link": "https://nextjoby.com/job/sap-ns2-information-security-compliance-expert/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/d7b148a2f1a5.png",
+    "keywords": "SAP,Information Security,Compliance,Herndon,Cybersecurity,ISO27001",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Solutions Engineer, SMB - Remote Position in Phoenix, AZ",
+    "description": "T-Mobile is hiring a Solutions Engineer for the SMB segment in the Phoenix market. This remote role focuses on enhancing business sales through technical expertise in wireless solutions. Responsibilities include collaborating with sales teams to identify customer opportunities and providing expert consultation on wireless network solutions. Ideal candidates will have strong analytical skills and excellent communication abilities. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/solutions-engineer-smb-phoenix-market-remote/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/0afabff0e4eb.png",
+    "keywords": "Solutions Engineer,Phoenix jobs,T-Mobile careers,remote work,wireless technology,SMB",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "OTA/Cloud Validation Engineer – New Grad (2027) in Sunnyvale, CA",
+    "description": "Applied Intuition is hiring an OTA/Cloud Validation Engineer for new graduates in 2027. Located in Sunnyvale, CA, this role involves validating cloud-based systems for performance and reliability, as well as testing and verifying OTA updates for autonomous systems. Candidates should possess a strong understanding of software validation and experience in programming languages like Python or C++. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/ota-cloud-validation-engineer-new-grad-2027/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/0d751ebf392d.png",
+    "keywords": "OTA Engineer,Cloud Validation,New Grad Jobs,Sunnyvale CA,Tech Careers,Applied Intuition",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Project Engineer Position Available in Kansas City, MO",
+    "description": "A leading construction firm in Kansas City, MO is hiring an experienced Project Engineer. This role involves offering technical assistance by reviewing project plans and creating construction timelines, as well as participating in project management by developing budgets and overseeing resources. Candidates should possess a Bachelor's degree in civil engineering or a related field and have over 5 years of experience in construction project engineering. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/project-engineer-71/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/8a91a5e2d78e.png",
+    "keywords": "Project Engineer,Kansas City,Construction Jobs,Civil Engineering,Engineering Careers,US Jobs",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Software Engineer, AI Platform – New Grad in Mountain View, CA",
+    "description": "Nuro is hiring a Software Engineer for their AI Platform in Mountain View, CA. This role involves contributing to the development of the Nuro Driver™, collaborating with cross-functional teams, and implementing algorithms for autonomous driving. Candidates should have proficiency in programming languages like Python or C++, and a strong understanding of algorithms. This is a full-time position for new graduates looking to make an impact in the tech industry. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/software-engineer-ai-platform-new-grad/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/9ed0ce6c986f.png",
+    "keywords": "Software Engineer,AI Platform,New Grad,Mountain View,Nuro,Tech Jobs",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Quantitative Research Engineer – PhD Intern at Citadel Securities, New York, NY",
+    "description": "Citadel Securities is hiring a Quantitative Research Engineer – PhD Intern in New York, NY. This internship offers the chance to design and implement software solutions for automated trading systems while collaborating with quantitative researchers. Ideal candidates should have a PhD in a quantitative field and proficiency in programming languages such as C++ or Python. Apply on NextJoby.",
+    "link": "https://nextjoby.com/job/quantitative-research-engineer-phd-intern-us-51/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/b712a3a2ef2c.png",
+    "keywords": "Quantitative Research,PhD Internship,Software Engineering,New York Jobs,Citadel Securities,Finance Careers",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Test Engineer Sr – E3 at Lockheed Martin in Lufkin, TX",
+    "description": "Lockheed Martin is hiring a Test Engineer Sr – E3 in Lufkin, TX. This critical role involves developing and executing testing protocols for both standard and specialized devices. The engineer will analyze data to identify necessary changes in testing equipment and procedures while collaborating with engineers and technicians to enhance testing processes. Interested candidates can apply on NextJoby.",
+    "link": "https://nextjoby.com/job/test-engineer-sr-e3/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/eee2c84dd732.png",
+    "keywords": "Test Engineer,Lockheed Martin,Lufkin TX,Engineering Jobs,US Jobs,Electronics Testing",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Commissioning & Engineering Manager at AWS in New Albany, OH",
+    "description": "Amazon Web Services is hiring a Commissioning & Engineering Manager in New Albany, OH. This role involves overseeing the testing and validation of electrical and mechanical systems in AWS data centers. The candidate will review design documents for compliance with engineering standards and lead Factory Witness Testing while managing third-party commissioning vendors. Strong project management skills and experience in electrical and mechanical commissioning processes are essential. Apply on NextJ",
+    "link": "https://nextjoby.com/job/commissioning-engineering-m/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/04fed90f9a84.png",
+    "keywords": "Commissioning Engineer,AWS Jobs,Engineering Careers,Data Center Jobs,Ohio Jobs,Tech Careers",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Principal QA Engineer at Fidelity in Westlake, LA",
+    "description": "Fidelity is hiring a Principal QA Engineer in Westlake, LA. This role involves developing and implementing automated testing solutions in a dynamic financial services environment. Key responsibilities include testing distributed applications across microservices architectures and maintaining automated test cases using various frameworks. The ideal candidate should have expertise in CI/CD pipelines and experience with tools like Selenium and Jenkins. Interested applicants can apply on NextJoby.",
+    "link": "https://nextjoby.com/job/principal-qa-engineer/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/d02a0d3be35c.png",
+    "keywords": "Principal QA Engineer,Quality Assurance,Automation Testing,Fidelity,Westlake LA,Software Testing",
+    "posted": false,
+    "batch": "2026-11-27"
+  },
+  {
+    "title": "Project Civil Engineer – Data Center in Fort Worth, TX",
+    "description": "Olsson is hiring a Project Civil Engineer for their Data Center Civil Team in Fort Worth, TX. This role involves leading planning and design efforts for large-scale data center projects, managing client standards for quality and design, and preparing essential documents for project execution. The ideal candidate will have a Bachelor's degree in Civil Engineering, at least 6 years of relevant experience, and proficiency in Civil 3D software. Interested candidates are encouraged to apply on NextJo",
+    "link": "https://nextjoby.com/job/project-civil-engineer-data-center/?utm_source=pinterest&utm_medium=social",
+    "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/7b50717e581f.png",
+    "keywords": "Project Civil Engineer,Data Center,Fort Worth,Olsson,Civil Engineering,Engineering Jobs",
+    "posted": false,
+    "batch": "2026-11-27"
   }
 ]
