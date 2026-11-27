@@ -2065,8 +2065,9 @@
     "link": "https://nextjoby.com/job/test-engineer-sr-e3/?utm_source=pinterest&utm_medium=social",
     "image_url": "https://raw.githubusercontent.com/maryaarab/linkedin-bot/main/pins/images/eee2c84dd732.png",
     "keywords": "Test Engineer,Lockheed Martin,Lufkin TX,Engineering Jobs,US Jobs,Electronics Testing",
-    "posted": false,
-    "batch": "2026-11-27"
+    "posted": true,
+    "batch": "2026-11-27",
+    "posted_at": "2026-11-27T21:30:16.083027+00:00"
   },
   {
     "title": "Commissioning & Engineering Manager at AWS in New Albany, OH",
