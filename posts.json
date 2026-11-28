@@ -5985,8 +5985,9 @@
     "text": "🚀 Senior System Software Engineer, Agentic Inference – Dynamo | NVIDIA | Santa Clara, CA 🇺🇸\n\nNVIDIA is at the forefront of the AI revolution, empowering breakthroughs in diverse fields through GPU-accelerated deep learning. The company is hiring a Senior System Software Engineer to join its innovative team focused on developing a Generative AI inference platform that simplifies the design and deployment of new AI models.\n\n📍 Santa Clara, CA\n💼 Full-time\n\nWhat you'll work on:\n✔️ Develop open-source software for the inference of AI models on GPUs.\n✔️ Contribute to disaggregated serving for various inference engines, enhancing capabilities for agentic inference workloads.\n✔️ Innovate in inference-state management to optimize GPU utilization and reduce processing costs for self-hosted LLMs.\n✔️ Build and evolve Dynamo's distributed inference frontend, ensuring compatibility with new models and efficient handling of stateful responses.\n✔️ Balance performance and scalability objectives while integrating the latest open-source technologies.\n✔️ Collaborate closely with team leads to prioritize and implement key features.\n\nSkills that can help you stand out:\n✅ Expertise in Rust and Python programming, with strong software design and debugging skills.\n✅ Understanding of modern LLM API semantics including context management and multimodal inputs.\n✅ Experience optimizing GPU memory and high-performance networking for complex inference workloads.\n✅ Prior contributions to open-source AI inference frameworks like vLLM or TensorRT-LLM.\n✅ Familiarity with integrating self-hosted LLM serving stacks with various agent harnesses.\n\n👉 View the full details & apply:  \nhttps://nextjoby.com/job/senior-system-software-engineer-agentic-inference-dynamo/?utm_source=linkedin\n\n#SeniorEngineer #AIInference #NVIDIA #SantaClaraJobs #USJobs #SoftwareEngineering #GPUComputing #DeepLearning",
     "location": "Santa Clara, CA",
     "category": "General Careers",
-    "posted": false,
-    "batch": "2026-11-27"
+    "posted": true,
+    "batch": "2026-11-27",
+    "posted_at": "2026-11-28T01:58:43.467113+00:00"
   },
   {
     "url": "https://nextjoby.com/job/cpu-clock-design-engineer/",
